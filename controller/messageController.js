@@ -2,7 +2,7 @@ import Message from "../model/message.js";
 import rateLimiter from "../middleware/rateLimiter.js";
 
 // Create a new message
-export const createMessage = rateLimiter ,async (req, res) => {
+export const createMessage = async (req, res) => {
     try {
         const { text } = req.body;
         if (!text || text.length > 300) {

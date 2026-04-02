@@ -1,14 +1,17 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
+import messageRoutes from './routes/messageRoutes.js';
 import dotenv from 'dotenv';
 dotenv.config();
+
 
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.set('view engine', 'ejs');
 
+app.use('/messages', messageRoutes);
 
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log('mongoDB connected successfully'))
