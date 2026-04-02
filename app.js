@@ -11,8 +11,15 @@ const app = express();
 app.set('trust proxy', 1);
 
 mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log('mongoDB connected successfully'))
-  .catch((err) => console.log(err));
+    .then(() => {
+        console.log('MongoDB connected')
+        app.listen(process.env.PORT || 8000, () => {
+            console.log('Server running')
+        })
+    })
+    .catch((err) => {
+        console.log('MongoDB connection error:', err)  
+    })
   
 app.set('view engine', 'ejs');
 
