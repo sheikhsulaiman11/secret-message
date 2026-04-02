@@ -6,57 +6,57 @@
     <title>Secret Messages</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-950 text-white min-h-screen">
+<body class="bg-gray-950 text-white h-screen flex flex-col">
 
     <!-- Navbar -->
-    <nav class="bg-gray-900 border-b border-gray-800 px-6 py-4">
-        <h1 class="text-xl font-bold text-purple-400 tracking-widest text-center">🤫 Secret Messages</h1>
+    <nav class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center gap-3 shrink-0">
+        <div class="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-sm font-bold">S</div>
+        <div>
+            <h1 class="font-semibold text-white text-sm">Secret Messages</h1>
+            <p class="text-xs text-green-400">Anonymous & Public</p>
+        </div>
     </nav>
 
-    <div class="max-w-2xl mx-auto px-4 py-10">
+   
 
-        <!-- Message Form -->
-        <div class="bg-gray-900 rounded-2xl p-6 mb-10 border border-gray-800 shadow-lg">
-            <h2 class="text-lg font-semibold text-gray-300 mb-4">Send an Anonymous Message</h2>
-            <form action="/messages" method="POST">
-                <textarea
-                    name="text"
-                    rows="3"
-                    maxlength="300"
-                    placeholder="Say something anonymously..."
-                    class="w-full bg-gray-800 text-white placeholder-gray-500 rounded-xl p-4 resize-none outline-none border border-gray-700 focus:border-purple-500 transition"
-                ></textarea>
-                <div class="flex justify-between items-center mt-3">
-                    <span class="text-gray-500 text-sm">Max 300 characters</span>
-                    <button
-                        type="submit"
-                        class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-xl transition"
-                    >
-                        Send
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Feed -->
-        <h2 class="text-lg font-semibold text-gray-400 mb-4">Public Feed</h2>
+    <!-- Chat Feed — scrollable -->
+    <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
 
         <% if(messages.length === 0) { %>
             <div class="text-center text-gray-600 mt-20">
                 <p class="text-4xl mb-3">🤫</p>
-                <p>No messages yet. Be the first!</p>
+                <p class="text-sm">No messages yet. Be the first!</p>
             </div>
         <% } %>
 
-        <div class="flex flex-col gap-4">
-            <% messages.forEach(msg => { %>
-                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-md hover:border-purple-700 transition">
-                    <p class="text-white text-base leading-relaxed"><%= msg.text %></p>
-                    <span class="text-gray-500 text-xs mt-3 block"><%= msg.time %></span>
+        <% messages.forEach(msg => { %>
+            <div class="flex flex-col max-w-xs lg:max-w-md">
+                <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-2 shadow">
+                    <p class="text-sm text-white leading-relaxed"><%= msg.text %></p>
+                    <span class="text-xs text-gray-500 mt-1 block text-right"><%= msg.time %></span>
                 </div>
-            <% }) %>
-        </div>
+            </div>
+        <% }) %>
 
+    </div>
+
+    <!-- Input Bar — fixed at bottom like whatsapp -->
+    <div class="bg-gray-900 border-t border-gray-800 px-4 py-3 shrink-0">
+        <form action="/" method="POST" class="flex items-center gap-3">
+            <input
+                type="text"
+                name="text"
+                maxlength="300"
+                placeholder="Type an anonymous message..."
+                class="flex-1 bg-gray-800 text-white placeholder-gray-500 rounded-full px-5 py-2 text-sm outline-none border border-gray-700 focus:border-purple-500 transition"
+            />
+            <button
+                type="submit"
+                class="bg-purple-600 hover:bg-purple-700 text-white rounded-full w-10 h-10 flex items-center justify-center transition shrink-0"
+            >
+                ➤
+            </button>
+        </form>
     </div>
 
 </body>

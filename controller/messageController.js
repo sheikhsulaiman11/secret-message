@@ -20,18 +20,21 @@ export const createMessage = async (req, res) => {
         }
         const message = new Message({ text });
         await message.save();
+        res.redirect('/');
         res.status(201).json({ message: 'Message created successfully', id: message._id });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'An error occurred while creating the message.' });
     }
 };
 
 
 export const getMessages = async (req, res) => {
-    const messages = await Message.find().sort({ createdAt: -1 }).limit(50)
+    const messages = await Message.find().sort({ createdAt: 1 }).limit(50)
     const formattedMessages = messages.map(msg => ({
         text: msg.text,
-        time: timeAgo(msg.createdAt) 
+        time: timeAgo(msg.createdAt) ,
+        
     }))
-    res.render('index', { messages: formattedMessages })
+    res.render('index', { messages: formattedMessages  })
 }
