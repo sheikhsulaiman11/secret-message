@@ -12,6 +12,7 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 
 app.use('/messages', messageRoutes);
+app.use('/', messageRoutes);
 
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log('mongoDB connected successfully'))

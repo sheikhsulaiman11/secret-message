@@ -1,5 +1,15 @@
 import Message from "../model/message.js";
-import rateLimiter from "../middleware/rateLimiter.js";
+
+
+const timeAgo = (date) => {
+    const seconds = Math.floor((new Date() - date) / 1000)
+
+    if (seconds < 60) return 'just now'
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`
+    return `${Math.floor(seconds / 604800)} weeks ago`
+}
 
 // Create a new message
 export const createMessage = async (req, res) => {
@@ -16,3 +26,12 @@ export const createMessage = async (req, res) => {
     }
 };
 
+
+export const getMessages = async (req, res) => {
+    const messages = await Message.find().sort({ createdAt: -1 }).limit(50)
+    const formattedMessages = messages.map(msg => ({
+        text: msg.text,
+        time: timeAgo(msg.createdAt) 
+    }))
+    res.render('index', { messages: formattedMessages })
+}
