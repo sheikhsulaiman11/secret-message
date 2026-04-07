@@ -6,6 +6,9 @@ const messageSchema = new mongoose.Schema({
         required: true,
         maxlength: 300
     },
+    
+     roomId: { type: mongoose.Schema.Types.ObjectId, ref: 'Room' },
+
     createdAt: {
         type: Date,
         default: Date.now,
@@ -13,4 +16,13 @@ const messageSchema = new mongoose.Schema({
     }
 });
 
-export default mongoose.model("Message", messageSchema);
+
+const roomSchema = new mongoose.Schema({
+    name : {type: String, required: true},
+    createdAt: {type: Date, default: Date.now}
+
+});
+
+
+export const Message = mongoose.model("Message", messageSchema);
+export const Room = mongoose.model("Room", roomSchema);

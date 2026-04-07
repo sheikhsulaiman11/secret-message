@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Messages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-sm font-bold">S</div>
+            <div>
+                <h1 class="font-semibold text-white text-sm">Secret Messages</h1>
+                <p class="text-xs text-green-400">Anonymous & Public</p>
+            </div>
+        </div>
+    </nav>
+    <% if(locals.error) { %>
+    <div class="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 text-center">
+        <%= error %>
+    </div>
+<% } %>
+
+    <!-- New Room Form -->
+    <div class="bg-gray-900 border-b border-gray-800 px-4 py-3 shrink-0">
+        <form action="/room" method="POST" class="flex items-center gap-3">
+            <input
+                type="text"
+                name="name"
+                maxlength="30"
+                placeholder="New chat name..."
+                class="flex-1 bg-gray-800 text-white placeholder-gray-500 rounded-full px-5 py-2 text-sm outline-none border border-gray-700 focus:border-purple-500 transition"
+            />
+            <button
+                type="submit"
+                class="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-5 py-2 text-sm font-medium transition shrink-0"
+            >
+                + New Chat
+            </button>
+        </form>
+    </div>
+
+    <!-- Rooms List -->
+    <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
+
+        <% if(rooms.length === 0) { %>
+            <div class="text-center text-gray-600 mt-20">
+                <p class="text-4xl mb-3">🤫</p>
+                <p class="text-sm">No chats yet. Create one!</p>
+            </div>
+        <% } %>
+
+        <% rooms.forEach(room => { %>
+            <a href="/room/<%= room._id %>" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-2xl px-4 py-3 flex items-center gap-3 transition">
+                <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-sm font-bold shrink-0">
+                    <%= room.name[0].toUpperCase() %>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-white"><%= room.name %></p>
+                    <p class="text-xs text-gray-500">Tap to join</p>
+                </div>
+            </a>
+        <% }) %>
+
+    </div>
+
+</body>
+</html>

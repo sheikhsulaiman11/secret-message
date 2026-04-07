@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Messages</title>
+    <title><%= room.name %></title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-950 text-white h-screen flex flex-col">
 
     <!-- Navbar -->
     <nav class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center gap-3 shrink-0">
-        <div class="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-sm font-bold">S</div>
+        <a href="/" class="text-gray-400 hover:text-white transition text-sm">← Back</a>
+        <div class="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-sm font-bold">
+            <%= room.name[0].toUpperCase() %>
+        </div>
         <div>
-            <h1 class="font-semibold text-white text-sm">Secret Messages</h1>
+            <h1 class="font-semibold text-white text-sm"><%= room.name %></h1>
             <p class="text-xs text-green-400">Anonymous & Public</p>
         </div>
     </nav>
 
-   
-
-    <!-- Chat Feed — scrollable -->
+    <!-- Chat Feed -->
     <div id="messages" class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
 
         <% if(messages.length === 0) { %>
@@ -40,9 +41,9 @@
 
     </div>
 
-    <!-- Input Bar — fixed at bottom like whatsapp -->
+    <!-- Input Bar -->
     <div class="bg-gray-900 border-t border-gray-800 px-4 py-3 shrink-0">
-        <form action="/" method="POST" class="flex items-center gap-3">
+        <form action="/room/<%= room._id %>" method="POST" class="flex items-center gap-3">
             <input
                 type="text"
                 name="text"
@@ -60,31 +61,31 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const roomId = '<%= room._id %>';
 
-<script>
-    const socket = io();
+        // join this specific room's socket channel
+        socket.emit('joinRoom', roomId);
 
-    socket.on('newMessage', (message) => {
-        // remove "no messages" placeholder if it exists
-        const empty = document.querySelector('#empty');
-        if (empty) empty.remove();
+        socket.on('newMessage', (message) => {
+            const empty = document.querySelector('#empty');
+            if (empty) empty.remove();
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'flex flex-col max-w-xs lg:max-w-md';
-        wrapper.innerHTML = `
-            <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-2 shadow">
-                <p class="text-sm text-white leading-relaxed">${message.text}</p>
-                <span class="text-xs text-gray-500 mt-1 block text-right">${message.time}</span>
-            </div>
-        `;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex flex-col max-w-xs lg:max-w-md';
+            wrapper.innerHTML = `
+                <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-2 shadow">
+                    <p class="text-sm text-white leading-relaxed">${message.text}</p>
+                    <span class="text-xs text-gray-500 mt-1 block text-right">${message.time}</span>
+                </div>
+            `;
 
-        document.querySelector('#messages').appendChild(wrapper);
-
-        // auto scroll to bottom
-        const feed = document.querySelector('#messages');
-        feed.scrollTop = feed.scrollHeight;
-    });
-</script>
+            const feed = document.querySelector('#messages');
+            feed.appendChild(wrapper);
+            feed.scrollTop = feed.scrollHeight;
+        });
+    </script>
 
 </body>
 </html>

@@ -14,10 +14,11 @@ const io = new Server(httpServer);
 export { io };
 
 io.on('connection', (socket) => {
-    console.log('user connected');
+    socket.on('joinRoom', (roomId) => {
+        socket.join(roomId);
+    });
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
     });
 });
 

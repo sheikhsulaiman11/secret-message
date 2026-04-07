@@ -1,4 +1,4 @@
-import Message from "../model/message.js";
+import {Message, Room} from "../model/message.js";
 import { io } from "../app.js";
 
 
@@ -12,35 +12,77 @@ const timeAgo = (date) => {
     return `${Math.floor(seconds / 604800)} weeks ago`
 }
 
-// Create a new message
+
+// Get all rooms for homepage
+export const getRooms = async (req, res) => {
+    try {
+        const rooms = await Room.find().sort({ createdAt: -1 });
+        res.render('home', { rooms, error: req.query.error || null });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+
+
+//create a new room
+export const createRoom = async (req, res) => {
+    try {
+        const {name} = req.body;
+        if (!name || name.length > 30) {
+            return res.redirect('/?error=Name must be between 1 to 30 characters');
+        }
+
+        const room = new Room ({name});
+        await room.save();
+        res.redirect(`/room/${room._id}`);
+
+    }catch (error) {
+        console.log(error);
+        res.redirect('/?error=An error occurred while creating the room');
+}}
+
+
+
+// Get messages for a specific room
+export const getMessages = async (req, res) => {
+    try {
+        const { roomId } = req.params;
+        const room = await Room.findById(roomId);
+        if (!room) return res.status(404).send('Room not found');
+
+        const messages = await Message.find({ roomId }).sort({ createdAt: 1 }).limit(50);
+        const formattedMessages = messages.map(msg => ({
+            text: msg.text,
+            time: timeAgo(msg.createdAt),
+        }));
+
+        res.render('room', { messages: formattedMessages, room });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'An error occurred while fetching messages.' });
+    }
+};
+
+// Create a new message in a specific room
 export const createMessage = async (req, res) => {
     try {
+        const { roomId } = req.params;
         const { text } = req.body;
         if (!text || text.length > 300) {
             return res.status(400).json({ error: 'Message must be between 1 and 300 characters.' });
         }
-        const message = new Message({ text });
+        const message = new Message({ text, roomId });
         await message.save();
 
-        io.emit('newMessage', {
-           text: message.text,
-           time: 'just now'     
+        io.to(roomId).emit('newMessage', {
+            text: message.text,
+            time: 'just now'
         });
-        
-        res.redirect('/');
+
+        res.redirect(`/room/${roomId}`);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'An error occurred while creating the message.' });
     }
 };
-
-
-export const getMessages = async (req, res) => {
-    const messages = await Message.find().sort({ createdAt: 1 }).limit(50)
-    const formattedMessages = messages.map(msg => ({
-        text: msg.text,
-        time: timeAgo(msg.createdAt) ,
-        
-    }))
-    res.render('index', { messages: formattedMessages  })
-}
