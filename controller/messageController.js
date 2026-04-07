@@ -21,7 +21,6 @@ export const createMessage = async (req, res) => {
         const message = new Message({ text });
         await message.save();
         res.redirect('/');
-        res.status(201).json({ message: 'Message created successfully', id: message._id });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'An error occurred while creating the message.' });
