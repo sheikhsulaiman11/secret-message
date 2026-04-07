@@ -20,10 +20,10 @@
    
 
     <!-- Chat Feed — scrollable -->
-    <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
+    <div id="messages" class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
 
         <% if(messages.length === 0) { %>
-            <div class="text-center text-gray-600 mt-20">
+            <div id="empty" class="text-center text-gray-600 mt-20">
                 <p class="text-4xl mb-3">🤫</p>
                 <p class="text-sm">No messages yet. Be the first!</p>
             </div>
@@ -58,6 +58,33 @@
             </button>
         </form>
     </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const socket = io();
+
+    socket.on('newMessage', (message) => {
+        // remove "no messages" placeholder if it exists
+        const empty = document.querySelector('#empty');
+        if (empty) empty.remove();
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-col max-w-xs lg:max-w-md';
+        wrapper.innerHTML = `
+            <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-2 shadow">
+                <p class="text-sm text-white leading-relaxed">${message.text}</p>
+                <span class="text-xs text-gray-500 mt-1 block text-right">${message.time}</span>
+            </div>
+        `;
+
+        document.querySelector('#messages').appendChild(wrapper);
+
+        // auto scroll to bottom
+        const feed = document.querySelector('#messages');
+        feed.scrollTop = feed.scrollHeight;
+    });
+</script>
 
 </body>
 </html>

@@ -1,4 +1,5 @@
 import Message from "../model/message.js";
+import { io } from "../app.js";
 
 
 const timeAgo = (date) => {
@@ -20,6 +21,12 @@ export const createMessage = async (req, res) => {
         }
         const message = new Message({ text });
         await message.save();
+
+        io.emit('newMessage', {
+           text: message.text,
+           time: 'just now'     
+        });
+        
         res.redirect('/');
     } catch (error) {
         console.log(error);
